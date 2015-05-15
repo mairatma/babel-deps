@@ -22,7 +22,7 @@ function compileFiles(files, opt_options) {
 	filesToCompile = files.concat();
 	for (var i = 0; i < filesToCompile.length; i++) {
 		var file = filesToCompile[i];
-		var currOptions = merge(options, file.options);
+		var currOptions = merge({}, options, file.options);
 		results.push({
 			babel: babel.transform(file.contents, normalizeOptions(currOptions)),
 			path: file.options.filename
