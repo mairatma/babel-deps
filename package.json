@@ -1,0 +1,31 @@
+{
+  "name": "babel-deps",
+  "version": "0.1.0",
+  "description": "Compiles javascript files and all their dependencies with babel.",
+  "license": "MIT",
+  "repository": "babel-deps",
+  "author": {
+    "name": "Maira Bello",
+    "email": "maira.araujo@liferay.com"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "nodeunit test/test.js"
+  },
+  "keywords": [
+    "babel",
+    "dependencies",
+    "deps",
+    "es6"
+  ],
+  "dependencies": {
+    "babel-core": "^5.4.2",
+    "merge": "^1.2.0"
+  }
+}
