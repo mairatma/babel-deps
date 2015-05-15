@@ -11,16 +11,15 @@ var hasFile = {};
 function compileFiles(files, opt_options) {
 	hasFile = {};
 	for (var i = 0; i < files.length; i++) {
-		var filePath = files[i].options.filename;
-		if (!filePath) {
+		if (!files[i].options || !files[i].options.filename) {
 			throw new Error('Files passed to babel-deps need to specify their paths as the filename babel option');
 		}
-		hasFile[filePath] = true;
+		hasFile[files[i].options.filename] = true;
 	}
 
 	var options = opt_options || {};
 	var results = [];
-	filesToCompile = files;
+	filesToCompile = files.concat();
 	for (var i = 0; i < filesToCompile.length; i++) {
 		var file = filesToCompile[i];
 		var currOptions = merge(options, file.options);
@@ -54,7 +53,7 @@ function normalizeOptions(options) {
 	if (options.resolveModuleSource) {
 		var originalFn = options.resolveModuleSource;
 		options.resolveModuleSource = function(source, filename) {
-			return fetchDependency(source, originalFn(source, filename));
+			return fetchDependency(originalFn(source, filename), filename);
 		};
 	} else {
 		options.resolveModuleSource = fetchDependency;
