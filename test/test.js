@@ -89,5 +89,13 @@ module.exports = {
 
 		fs.readFileSync.restore();
 		test.done();
+	},
+
+	testGetFullPath: function(test) {
+		assert.strictEqual('/full/path/foo.js', babelDeps.getFullPath('./foo', '/full/path/bar.js'));
+		assert.strictEqual('/full/path/foo.js', babelDeps.getFullPath('./foo.js', '/full/path/bar.js'));
+		assert.strictEqual('/full/path2/foo.js', babelDeps.getFullPath('/full/path2/foo', '/full/path/bar.js'));
+		assert.strictEqual('/full/path2/foo.js', babelDeps.getFullPath('/full/path2/foo.js', '/full/path/bar.js'));
+		test.done();
 	}
 };

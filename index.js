@@ -32,21 +32,26 @@ function compileFiles(files, opt_options) {
 }
 
 function fetchDependency(source, filename) {
-	var dep = source;
-	if (dep.substr(dep.length - 3) !== '.js') {
-		dep += '.js';
-	}
-	if (dep[0] === '.') {
-		dep = path.resolve(path.dirname(filename), dep);
-	}
-	if (!hasFile[dep]) {
+	var fullPath = getFullPath(source, filename);
+	if (!hasFile[fullPath]) {
 		filesToCompile.push({
-			contents: fs.readFileSync(dep, 'utf8'),
-			options: {filename: dep}
+			contents: fs.readFileSync(fullPath, 'utf8'),
+			options: {filename: fullPath}
 		});
-		hasFile[dep] = true;
+		hasFile[fullPath] = true;
 	}
 	return source;
+}
+
+function getFullPath(source, filename) {
+	var fullPath = source;
+	if (fullPath.substr(fullPath.length - 3) !== '.js') {
+		fullPath += '.js';
+	}
+	if (fullPath[0] === '.') {
+		fullPath = path.resolve(path.dirname(filename), fullPath);
+	}
+	return fullPath;
 }
 
 function normalizeOptions(options) {
@@ -62,3 +67,4 @@ function normalizeOptions(options) {
 }
 
 module.exports = compileFiles;
+module.exports.getFullPath = getFullPath;
