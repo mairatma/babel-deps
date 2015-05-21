@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "description": "Compiles javascript files and all their dependencies with babel.",
   "license": "MIT",
-  "repository": "babel-deps",
+  "repository": "mairatma/babel-deps",
   "author": {
     "name": "Maira Bello",
     "email": "maira.araujo@liferay.com"
