@@ -16,6 +16,7 @@
     "index.js"
   ],
   "scripts": {
+    "coverage": "istanbul cover nodeunit -- test/test.js",
     "test": "nodeunit test/test.js"
   },
   "keywords": [
@@ -29,6 +30,8 @@
     "merge": "^1.2.0"
   },
   "devDependencies": {
+    "istanbul": "^0.3.14",
+    "nodeunit": "^0.9.1",
     "sinon": "^1.14.1"
   }
 }

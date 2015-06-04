@@ -59,12 +59,45 @@ module.exports = {
 				options: {filename: path.resolve('test/assets/foo.js')}
 			}
 		];
-		var results = babelDeps(files, {resolveModuleSource: function(source) {
+		function rename(source) {
 			if (source[0] !== '.') {
 				source = './' + source;
 			}
 			return source;
-		}});
+		}
+		var results = babelDeps(files, {babel: {resolveModuleSource: rename}});
+		assert.strictEqual(3, results.length);
+		assert.strictEqual(path.resolve('test/assets/mainAlias.js'), results[0].path);
+		assert.strictEqual(path.resolve('test/assets/foo.js'), results[1].path);
+		assert.strictEqual(path.resolve('test/assets/bar.js'), results[2].path);
+
+		test.done();
+	},
+
+	testCompileFetchingFromOriginalSource: function(test) {
+		var files = [
+			{
+				contents: fs.readFileSync(path.resolve('test/assets/mainAlias.js'), 'utf8'),
+				options: {filename: path.resolve('test/assets/mainAlias.js')}
+			},
+			{
+				contents: fs.readFileSync(path.resolve('test/assets/foo.js'), 'utf8'),
+				options: {filename: path.resolve('test/assets/foo.js')}
+			}
+		];
+		function rename(source) {
+			if (source[0] !== '.') {
+				source = './' + source;
+			}
+			return source;
+		}
+		var results = babelDeps(files, {
+			babel: {resolveModuleSource: rename},
+			fetchFromOriginalModuleSource: true,
+			resolveModuleToPath: function(source, filename) {
+				return path.resolve(path.dirname(filename), rename(source) + '.js');
+			}
+		});
 		assert.strictEqual(3, results.length);
 		assert.strictEqual(path.resolve('test/assets/mainAlias.js'), results[0].path);
 		assert.strictEqual(path.resolve('test/assets/foo.js'), results[1].path);

@@ -22,17 +22,20 @@ function compileFiles(files, opt_options) {
 	filesToCompile = files.concat();
 	for (var i = 0; i < filesToCompile.length; i++) {
 		var file = filesToCompile[i];
-		var currOptions = merge({}, options, file.options);
+		var currOptions = merge({}, options);
+		currOptions.babel = merge({}, currOptions.babel, file.options);
+		currOptions = normalizeOptions(currOptions);
 		results.push({
-			babel: babel.transform(file.contents, normalizeOptions(currOptions)),
+			babel: babel.transform(file.contents, currOptions.babel),
 			path: file.options.filename
 		});
 	}
 	return results;
 }
 
-function fetchDependency(source, filename) {
-	var fullPath = getFullPath(source, filename);
+function fetchDependency(source, filename, resolveModuleToPath) {
+	resolveModuleToPath = resolveModuleToPath || getFullPath;
+	var fullPath = resolveModuleToPath(source, filename);
 	if (!hasFile[fullPath]) {
 		filesToCompile.push({
 			contents: fs.readFileSync(fullPath, 'utf8'),
@@ -40,7 +43,6 @@ function fetchDependency(source, filename) {
 		});
 		hasFile[fullPath] = true;
 	}
-	return source;
 }
 
 function getFullPath(source, filename) {
@@ -55,13 +57,21 @@ function getFullPath(source, filename) {
 }
 
 function normalizeOptions(options) {
-	if (options.resolveModuleSource) {
-		var originalFn = options.resolveModuleSource;
-		options.resolveModuleSource = function(source, filename) {
-			return fetchDependency(originalFn(source, filename), filename);
+	if (options.babel.resolveModuleSource) {
+		var originalFn = options.babel.resolveModuleSource;
+		options.babel.resolveModuleSource = function(source, filename) {
+			var newSource = originalFn(source, filename);
+			if (!options.fetchFromOriginalModuleSource) {
+				source = newSource;
+			}
+			fetchDependency(source, filename, options.resolveModuleToPath);
+			return newSource;
 		};
 	} else {
-		options.resolveModuleSource = fetchDependency;
+		options.babel.resolveModuleSource = function(source, filename) {
+			fetchDependency(source, filename, options.resolveModuleToPath);
+			return source;
+		};
 	}
 	return options;
 }
