@@ -53,11 +53,14 @@ module.exports = {
 			contents: 'import foo from "/missing/path/foo";',
 			options: {filename: path.resolve('test/assets/missing.js')}
 		}];
+		sinon.stub(console, 'warn');
 
 		assert.doesNotThrow(function() {
 			babelDeps(files);
 		});
 
+		assert.strictEqual(1, console.warn.callCount);
+		console.warn.restore();
 		test.done();
 	},
 
