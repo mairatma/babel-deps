@@ -48,6 +48,19 @@ module.exports = {
 		test.done();
 	},
 
+	testMissingDependency: function(test) {
+		var files = [{
+			contents: 'import foo from "/missing/path/foo";',
+			options: {filename: path.resolve('test/assets/missing.js')}
+		}];
+
+		assert.doesNotThrow(function() {
+			babelDeps(files);
+		});
+
+		test.done();
+	},
+
 	testCompileWithResolveModuleSource: function(test) {
 		var files = [
 			{

@@ -37,10 +37,14 @@ function fetchDependency(source, filename, resolveModuleToPath) {
 	resolveModuleToPath = resolveModuleToPath || getFullPath;
 	var fullPath = resolveModuleToPath(source, filename);
 	if (!hasFile[fullPath]) {
-		filesToCompile.push({
-			contents: fs.readFileSync(fullPath, 'utf8'),
-			options: {filename: fullPath}
-		});
+		if (fs.existsSync(fullPath)) {
+			filesToCompile.push({
+				contents: fs.readFileSync(fullPath, 'utf8'),
+				options: {filename: fullPath}
+			});
+		} else {
+			console.warn('Could not find ' + fullPath);
+		}
 		hasFile[fullPath] = true;
 	}
 }
