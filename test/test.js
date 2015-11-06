@@ -128,11 +128,19 @@ module.exports = {
 			contents: 'import foo from "' + absolutePath + '";',
 			options: {filename: path.resolve('test/assets/absolute.js')}
 		}];
-		sinon.stub(fs, 'readFileSync');
+
+		var called;
+		var originalFn = fs.readFileSync;
+		sinon.stub(fs, 'readFileSync', function(filePath, enc) {
+			if (filePath === absolutePath) {
+				called = true;
+			} else {
+				return originalFn(filePath, enc);
+			}
+		});
 
 		var results = babelDeps(files);
-		assert.strictEqual(1, fs.readFileSync.callCount);
-		assert.strictEqual(absolutePath, fs.readFileSync.args[0][0]);
+		assert.ok(called);
 		assert.strictEqual(2, results.length);
 		assert.strictEqual(path.resolve('test/assets/absolute.js'), results[0].path);
 		assert.strictEqual(absolutePath, results[1].path);

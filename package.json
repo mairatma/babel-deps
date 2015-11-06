@@ -26,11 +26,11 @@
     "es6"
   ],
   "dependencies": {
-    "babel-core": "^5.4.2",
+    "babel-core": "^6.1.2",
     "merge": "^1.2.0"
   },
   "devDependencies": {
-    "istanbul": "^0.3.14",
+    "istanbul": "^0.4.0",
     "nodeunit": "^0.9.1",
     "sinon": "^1.14.1"
   }
