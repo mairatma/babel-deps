@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "coverage": "istanbul cover nodeunit -- test/test.js",
+    "lint": "jshint test/test.js index.js",
     "test": "nodeunit test/test.js"
   },
   "keywords": [
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.0",
+    "jshint": "^2.7.0",
     "nodeunit": "^0.9.1",
     "sinon": "^1.14.1"
   }

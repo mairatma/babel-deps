@@ -20,8 +20,8 @@ function compileFiles(files, opt_options) {
 	var options = opt_options || {};
 	var results = [];
 	filesToCompile = files.concat();
-	for (var i = 0; i < filesToCompile.length; i++) {
-		var file = filesToCompile[i];
+	for (var j = 0; j < filesToCompile.length; j++) {
+		var file = filesToCompile[j];
 		var currOptions = merge({}, options);
 		currOptions.babel = merge({}, currOptions.babel, file.options);
 		currOptions = normalizeOptions(currOptions);
