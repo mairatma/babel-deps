@@ -11,9 +11,7 @@ var hasFile = {};
 function compileFiles(files, opt_options) {
 	hasFile = {};
 	for (var i = 0; i < files.length; i++) {
-		if (!files[i].options || !files[i].options.filename) {
-			throw new Error('Files passed to babel-deps need to specify their paths as the filename babel option');
-		}
+		assertFilenameOption(files[i]);
 		hasFile[files[i].options.filename] = true;
 	}
 
@@ -24,13 +22,26 @@ function compileFiles(files, opt_options) {
 		var file = filesToCompile[j];
 		var currOptions = merge({}, options);
 		currOptions.babel = merge({}, currOptions.babel, file.options);
-		currOptions = normalizeOptions(currOptions);
 		results.push({
 			babel: babel.transform(file.contents, currOptions.babel),
 			path: file.options.filename
 		});
+		fetchDependencies(results[j], options.resolveModuleToPath);
 	}
 	return results;
+}
+
+function assertFilenameOption(file) {
+	if (!file.options || !file.options.filename) {
+		throw new Error('Files passed to babel-deps need to specify their paths as the filename babel option');
+	}
+}
+
+function fetchDependencies(result, resolveModuleToPath) {
+	var imports = result.babel.metadata.modules.imports;
+	imports.forEach(function(importData) {
+		fetchDependency(importData.source, result.path, resolveModuleToPath);
+	});
 }
 
 function fetchDependency(source, filename, resolveModuleToPath) {
@@ -58,26 +69,6 @@ function getFullPath(source, filename) {
 		fullPath = path.resolve(path.dirname(filename), fullPath);
 	}
 	return fullPath;
-}
-
-function normalizeOptions(options) {
-	if (options.babel.resolveModuleSource) {
-		var originalFn = options.babel.resolveModuleSource;
-		options.babel.resolveModuleSource = function(source, filename) {
-			var newSource = originalFn(source, filename);
-			if (!options.fetchFromOriginalModuleSource) {
-				source = newSource;
-			}
-			fetchDependency(source, filename, options.resolveModuleToPath);
-			return newSource;
-		};
-	} else {
-		options.babel.resolveModuleSource = function(source, filename) {
-			fetchDependency(source, filename, options.resolveModuleToPath);
-			return source;
-		};
-	}
-	return options;
 }
 
 module.exports = compileFiles;

@@ -34,5 +34,4 @@ An array of files to be compiled with their dependencies. Each element of the ar
 The options object can have the following keys (all optional):
 
 - `babel` **(Object)** An object with babel options that should be used for all files. File specific options will be merged with this before the file is compiled, so they have higher priority.
-- `fetchFromOriginalModuleSource` **(boolean)** If true, files will be fetched from the original module sources indicated in the file contents. Otherwise, they will be fetched from the value returned by babel's `resolveModuleSource` option, if it was set.
 - `resolveModuleToPath` **(function(string, string))** Function that should be called to convert a dependency module source to its path, so it can be fetched. If this is not given, a default function will assume that the module sources already are valid paths.
