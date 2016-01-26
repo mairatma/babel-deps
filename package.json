@@ -27,7 +27,7 @@
     "es6"
   ],
   "dependencies": {
-    "babel-core": "~6.3.0",
+    "babel-core": "^6.3.0",
     "merge": "^1.2.0"
   },
   "devDependencies": {
