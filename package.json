@@ -1,6 +1,6 @@
 {
   "name": "babel-deps",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Compiles javascript files and all their dependencies with babel.",
   "license": "MIT",
   "repository": "mairatma/babel-deps",
