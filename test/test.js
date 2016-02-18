@@ -186,6 +186,26 @@ module.exports = {
 		test.done();
 	},
 
+	testSkipCachedFileResults: function(test) {
+		var files = [
+			{
+				contents: fs.readFileSync(path.resolve('test/assets/main.js'), 'utf8'),
+				options: {filename: path.resolve('test/assets/main.js')}
+			}
+		];
+		var results = babelDeps(files, {cache: true, skipCachedFiles: true});
+
+		files[0].contents = 'import bar from "./bar";';
+		var results2 = babelDeps(files, {cache: true, skipCachedFiles: true});
+
+		assert.strictEqual(3, results.length);
+		assert.strictEqual(1, results2.length);
+		assert.strictEqual(results[0].path, results2[0].path);
+		assert.notStrictEqual(results[0].babel, results2[0].babel);
+
+		test.done();
+	},
+
 	testGetFullPath: function(test) {
 		assert.strictEqual('/full/path/foo.js', babelDeps.getFullPath('./foo', '/full/path/bar.js'));
 		assert.strictEqual('/full/path/foo.js', babelDeps.getFullPath('./foo.js', '/full/path/bar.js'));

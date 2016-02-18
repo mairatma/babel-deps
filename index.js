@@ -52,7 +52,7 @@ function compileFiles(files, opt_options) {
 		var transformed = transform(file, options);
 		if (transformed) {
 			results.push({
-				babel: transform(file, options),
+				babel: transformed,
 				path: file.options.filename
 			});
 			addDependencies(results[results.length - 1], options.resolveModuleToPath);
@@ -77,7 +77,8 @@ function transform(file, options) {
 
 	var cached = cache[filePath];
 	if (options.cache && cached && (!file.contents || cached.contents === file.contents)) {
-		return cached.babel;
+		// We have the file on cache and its contents didn't change.
+		return options.skipCachedFiles ? null : cached.babel;
 	}
 
 	if (!file.contents) {
