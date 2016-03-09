@@ -33,6 +33,20 @@ function assertFilenameOption(file) {
 	}
 }
 
+function cacheFile(filePath, babel, contents, namespace) {
+	if (!namespace) {
+		return;
+	}
+	namespace = namespace === true ? 'default' : namespace;
+	if (!cache[namespace]) {
+		cache[namespace] = {};
+	}
+	cache[namespace][filePath] = {
+		babel: babel,
+		contents: contents
+	};
+}
+
 function clearCache() {
 	cache = {};
 }
@@ -61,6 +75,14 @@ function compileFiles(files, opt_options) {
 	return results;
 }
 
+function getCached(filePath, namespace) {
+	namespace = namespace === true ? 'default' : namespace;
+	if (!namespace || !cache[namespace]) {
+		return null;
+	}
+	return cache[namespace][filePath];
+}
+
 function getFullPath(source, filename) {
 	var fullPath = source;
 	if (fullPath.substr(fullPath.length - 3) !== '.js') {
@@ -75,8 +97,8 @@ function getFullPath(source, filename) {
 function transform(file, options) {
 	var filePath = file.options.filename;
 
-	var cached = cache[filePath];
-	if (options.cache && cached && (!file.contents || cached.contents === file.contents)) {
+	var cached = getCached(filePath, options.cache);
+	if (cached && (!file.contents || cached.contents === file.contents)) {
 		// We have the file on cache and its contents didn't change.
 		return options.skipCachedFiles ? null : cached.babel;
 	}
@@ -92,12 +114,7 @@ function transform(file, options) {
 
 	var currOptions = merge({}, options.babel, file.options);
 	var result = babel.transform(file.contents, currOptions);
-	if (options.cache) {
-		cache[filePath] = {
-			babel: result,
-			contents: file.contents
-		};
-	}
+	cacheFile(filePath, result, file.contents, options.cache);
 	return result;
 }
 

@@ -186,6 +186,44 @@ module.exports = {
 		test.done();
 	},
 
+	testUseCacheResultsIfSameNamespace: function(test) {
+		var files = [
+			{
+				contents: fs.readFileSync(path.resolve('test/assets/main.js'), 'utf8'),
+				options: {filename: path.resolve('test/assets/main.js')}
+			}
+		];
+		var results = babelDeps(files, {cache: 'test'});
+		var results2 = babelDeps(files, {cache: 'test'});
+
+		assert.strictEqual(3, results.length);
+		assert.strictEqual(results.length, results2.length);
+		assert.strictEqual(results[0].babel, results2[0].babel);
+		assert.strictEqual(results[1].babel, results2[1].babel);
+		assert.strictEqual(results[2].babel, results2[2].babel);
+
+		test.done();
+	},
+
+	testDontUseCacheResultsIfDifferentNamespace: function(test) {
+		var files = [
+			{
+				contents: fs.readFileSync(path.resolve('test/assets/main.js'), 'utf8'),
+				options: {filename: path.resolve('test/assets/main.js')}
+			}
+		];
+		var results = babelDeps(files, {cache: 'test'});
+		var results2 = babelDeps(files, {cache: 'test2'});
+
+		assert.strictEqual(3, results.length);
+		assert.strictEqual(results.length, results2.length);
+		assert.notStrictEqual(results[0].babel, results2[0].babel);
+		assert.notStrictEqual(results[1].babel, results2[1].babel);
+		assert.notStrictEqual(results[2].babel, results2[2].babel);
+
+		test.done();
+	},
+
 	testSkipCachedFileResults: function(test) {
 		var files = [
 			{
